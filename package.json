@@ -6,7 +6,7 @@
   "name": "my-webpack-project",
   "description": "My webpack project",
   "version": "1.0.0",
-  "main": "index.html",
+  "main": "src/index.js",
   "devDependencies": {
     "@babel/core": "^7.24.0",
     "@babel/preset-env": "^7.24.0",
