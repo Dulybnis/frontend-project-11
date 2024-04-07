@@ -1,7 +1,9 @@
 {
   "dependencies": {
     "@popperjs/core": "^2.11.8",
-    "bootstrap": "^5.3.3"
+    "bootstrap": "^5.3.3",
+    "on-change": "^5.0.1",
+    "yup": "^1.4.0"
   },
   "name": "@hexlet/code",
   "description": "RSS agregator",
