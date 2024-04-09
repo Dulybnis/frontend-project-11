@@ -1,10 +1,44 @@
+import i18n from 'i18next';
 import * as yup from 'yup';
 import onChange from 'on-change';
+import resources from './locales/index.js';
 
-export default () => {
+
+
+export default async () => {
+  const stats = {
+    language: 'ru',
+    urls: [],
+    status: '',
+    isTrue: true,
+  };
+
+  const i18ni = i18n;
+  await i18ni.init({
+    lng: stats.language,
+    debug: false,
+    resources,
+  });
+
   const form = document.querySelector('.rss-form');
   const input = document.querySelector('#url-input');
   const pText = document.querySelector('.feedback');
+  const h1 = document.querySelector('h1');
+  const lead = document.querySelector('.lead');
+  const underText = document.querySelector('.text-muted');
+
+  input.nextElementSibling.textContent = i18ni.t('inputText');
+  h1.textContent = i18ni.t('h1');
+  lead.textContent = i18ni.t('displayText');
+  form.querySelector('button').textContent = i18ni.t('buttomText');
+  underText.textContent = i18ni.t('underFormText');
+
+  yup.setLocale({
+    mixed: {
+      default: 'Поле не валидно',
+    },
+    string: { url: 'Ссылка должна быть валидным URL'},
+  });
 
   const schema = yup.string().url().nullable();
 
@@ -13,18 +47,12 @@ export default () => {
       schema.validateSync(data);
       return;
     } catch (e) {
-      return e.message;
+      return (e.message);
     }
   };
 
-  const state = {
-    urls: [],
-    status: '',
-    isTrue: true,
-  };
-
-    const render = (isTrue) => {
-    pText.textContent = state.status;
+  const render = (isTrue) => {
+    pText.textContent = stats.status;
     if (isTrue) {
       input.classList.remove('is-invalid');
       pText.classList.remove('text-danger');
@@ -36,23 +64,23 @@ export default () => {
     }
   };
 
-  const wathedSubmit = onChange(state, () => {
-    render(state.isTrue);
+  const wathedSubmit = onChange(stats, () => {
+    render(stats.isTrue);
   });
 
   const addUrl = (url) => {
     if (validate(url)) {
-      state.isTrue = false;
+      stats.isTrue = false;
       wathedSubmit.status = validate(url);
     } else {
-      if (!state.urls.includes(url)) {
-        state.status = 'RSS успешно загружен';
-        state.isTrue = true;
+      if (!stats.urls.includes(url)) {
+        stats.status = i18ni.t('text.rssAdded');
+        stats.isTrue = true;
         input.value = '';
         input.focus();
         wathedSubmit.urls.push(url);
       } else {
-        state.status = 'RSS уже существует';
+        stats.status = i18ni.t('text.rssAlredy')
         wathedSubmit.isTrue = false;
       }
     }

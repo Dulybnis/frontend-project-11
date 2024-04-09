@@ -1,41 +1,39 @@
 <!DOCTYPE html>
-<meta name="viewport" content="width=device-width, initial-scale=1">
 <html>
-    <head>
-        <meta charset="utf-8" />
-        <title>Webpack App</title>
-    </head>
-    <body class="d-flex flex-column min-vh-100">
-        <section class="container-fluid bg-dark p-5">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8" />
+    <title>Hexlet Frontend Project</title>
+  </head>
+  <body class="d-flex flex-column min-vh-100">
+    <section class="container-fluid bg-dark p-5">
+      <div class="row">
+        <div class="col-md-10 col-lg-8 mx-auto text-white">
+          <h1 class="display-3 mb-0">RSS агрегатор</h1>
+          <p class="lead">Начните читать RSS сегодня! Это легко, это красиво.</p>
+          <form class="rss-form text-body" action="">
             <div class="row">
-                <div class="col-md-10 col-lg-8 mx-auto text-white">
-                    <h1 class="display-3 mb-0">RSS агрегатор</h1>
-                    <p class="lead">Начните читать RSS сегодня! Это легко, это красиво.</p>
-                    <form class="rss-form text-body" action="">
-                        <div class="row">
-                            <div class="col">
-                                <div class="form-floating">
-                                    <input id="url-input" placeholder="ссылка RSS" class="form-control w-100">
-                                    <label for="url-input">Ссылка RSS</label>
-                                </div>
-                            </div>
-                            <div class="col-auto">
-                                <button class="h-100 btn btn-lg btn-primary px-sm-5" type="submit" aria-label="add">Добавить</button>
-                            </div>
-                        </div>
-                    </form>
-                    <p class="mt-2 mb-0 text-muted">Пример: https://lorem-rss.hexlet.app/feed</p>
-                    <p class="feedback m-0 position-absolute small text-danger"></p>
+              <div class="col">
+                <div class="form-floating">
+                  <input id="url-input" placeholder="ссылка RSS" class="form-control w-100">
+                  <label for="url-input">Ссылка RSS</label>
                 </div>
+              </div>
+              <div class="col-auto">
+                  <button class="h-100 btn btn-lg btn-primary px-sm-5" type="submit" aria-label="add">Добавить</button>
+              </div>
             </div>
-        </section>
-        <section class="container-fluid container-xxl p-5">
-            <h1>Hello world!</h1>
-            <h2>Tip: Check your console</h2>
-        </section>
-    </body>
-    <footer class="footer border-top py-3 mt-5 bg-light">
-
-    </footer>
-    
+          </form>
+          <p class="mt-2 mb-0 text-muted">Пример: https://lorem-rss.hexlet.app/feed</p>
+          <p class="feedback m-0 position-absolute small text-danger"></p>
+        </div>
+      </div>
+    </section>
+    <section class="container-fluid container-xxl p-5">
+      <h1>Hello world!</h1>
+      <h2>Tip: Check your console</h2>
+    </section>
+  </body>
+  <footer class="footer border-top py-3 mt-5 bg-light">
+  </footer>
 </html>
