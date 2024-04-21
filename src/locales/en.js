@@ -8,6 +8,7 @@ export default {
     text: {
       rssAdded: 'RSS uploaded successfully',
       rssAlredy: 'RSS already exists',
+      'channel is null': 'RSS is not valide',
     },
   },
 };

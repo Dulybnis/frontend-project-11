@@ -8,6 +8,7 @@ export default {
     text: {
       rssAdded: 'RSS успешно загружен',
       rssAlredy: 'RSS уже существует',
+      'channel is null': 'Ресурс не содержит валидный RSS',
     },
   },
 };
