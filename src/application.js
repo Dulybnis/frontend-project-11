@@ -3,10 +3,9 @@ import * as yup from 'yup';
 import onChange from 'on-change';
 import resources from './locales/index.js';
 import axios from 'axios';
-// import fs from 'fs';
 
 
-export default async () => {
+export default () => {
   const stats = {
     language: 'ru',
     urls: [],
@@ -22,10 +21,10 @@ export default async () => {
   };
 
   const i18ni = i18n;
-  await i18ni.init({
-    lng: stats.language,
-    debug: false,
-    resources,
+    i18ni.init({
+      lng: stats.language,
+      debug: false,
+      resources,
   });
 
   const form = document.querySelector('.rss-form');
@@ -51,15 +50,6 @@ export default async () => {
   });
 
   const schema = yup.string().url().nullable();
-
-  const validate = (data) => {
-    try {
-      schema.validateSync(data);
-      return;
-    } catch (e) {
-      return (e.message);
-    }
-  };
 
   const render = (isTrue) => {
     pText.textContent = stats.status;
@@ -118,12 +108,10 @@ export default async () => {
 
   const watchedFeedState = onChange(feedStats.feed, () => {
     feedsRender();
-    // console.log('feedStats.post = ', feedStats);
   });
 
   const watchedPostState = onChange(feedStats.post, () => {
     postsRender();
-    // console.log('feedStats.post = ', feedStats);
   });
 
   const parse = (rss) => {
@@ -148,15 +136,25 @@ export default async () => {
         link: item.querySelector('link').textContent,
       });
     });
-    // feedsRender();
     watchedFeedState.push(newFeedStats);
     watchedPostState.push(...newPostStats);
-    // postsRender();
   };
 
   const getUrls = (url) => {
     axios.get(`https://allorigins.hexlet.app/get?url=${encodeURIComponent(url)}`)
-      .then((answer) => parse(answer.data.contents))
+      .then((answer) => {
+        if (!stats.urls.includes(url)) {
+          stats.status = i18ni.t('text.rssAdded');
+          stats.isTrue = true;
+          input.value = '';
+          input.focus();
+          wathedSubmit.urls.push(url);
+          parse(answer.data.contents);
+        } else {
+          stats.status = i18ni.t('text.rssAlredy');
+          wathedSubmit.isTrue = false;
+        }
+      })
       .catch((e) => {
         stats.status = i18ni.t(`text.${e.message}`);
         wathedSubmit.isTrue = false;
@@ -164,22 +162,12 @@ export default async () => {
   };
 
   const addUrl = (url) => {
-    if (validate(url)) {
-      stats.isTrue = false;
-      wathedSubmit.status = validate(url);
-    } else {
-      if (!stats.urls.includes(url)) {
-        stats.status = i18ni.t('text.rssAdded');
-        stats.isTrue = true;
-        input.value = '';
-        input.focus();
-        wathedSubmit.urls.push(url);
-        getUrls(url);
-      } else {
-        stats.status = i18ni.t('text.rssAlredy');
-        wathedSubmit.isTrue = false;
-      }
-    }
+    schema.validate(url)
+      .then((data) => getUrls(data))
+      .catch((e) => {
+        stats.isTrue = false;
+        wathedSubmit.status = e.message;
+      })
   };
 
   form.addEventListener('submit', (e) => {
