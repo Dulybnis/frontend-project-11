@@ -118,6 +118,10 @@ export default () => {
     const parser = new DOMParser();
     const parseRSS = parser.parseFromString(rss, 'application/xml');
     const channel = parseRSS.querySelector('channel');
+    if (!channel) {
+      throw new Error('channel is null');
+    }
+      console.log('channel = ', channel);
     feedStats.lastFeedId += 1;
     const newFeedStats = {
       id: feedStats.lastFeedId,
@@ -136,6 +140,7 @@ export default () => {
         link: item.querySelector('link').textContent,
       });
     });
+    
     watchedFeedState.push(newFeedStats);
     watchedPostState.push(...newPostStats);
   };
@@ -143,6 +148,7 @@ export default () => {
   const getUrls = (url) => {
     axios.get(`https://allorigins.hexlet.app/get?url=${encodeURIComponent(url)}`)
       .then((answer) => {
+        console.log('answer is ', answer);
         if (!stats.urls.includes(url)) {
           stats.status = i18ni.t('text.rssAdded');
           stats.isTrue = true;
