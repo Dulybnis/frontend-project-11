@@ -156,6 +156,8 @@ export default () => {
         }
       })
       .catch((e) => {
+        console.log(e);
+        console.log(e.message);
         stats.status = i18ni.t(`text.${e.message}`);
         wathedSubmit.isTrue = false;
       })
