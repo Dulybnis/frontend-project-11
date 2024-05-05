@@ -37,6 +37,8 @@ export default () => {
   const underText = document.querySelector('.text-muted');
   const posts = document.querySelector('.posts');
   const feeds = document.querySelector('.feeds');
+  const modalTitle = document.querySelector('.modal-title');
+  const modalBody = document.querySelector('.modal-body');
 
   input.nextElementSibling.textContent = i18ni.t('inputText');
   h1.textContent = i18ni.t('h1');
@@ -99,7 +101,16 @@ export default () => {
       stats.feedStats.post.map((postItem) => {
         const liEl = document.createElement('li');
         liEl.className = 'list-group-item d-flex justify-content-between align-items-start border-0 border-end-0';
-        liEl.innerHTML = `<a href="${postItem.link}" class="fw-bold" data-id="${postItem.id}" target="_blank" rel="noopener noreferrer">${postItem.title}</a><button type="button" class="btn btn-outline-primary btn-sm" data-id="${postItem.id}" data-bs-toggle="modal" data-bs-target="#modal">Просмотр</button>`
+        liEl.innerHTML = `<a href="${postItem.link}" class="${postItem.fw}" data-id="${postItem.id}" target="_blank" rel="noopener noreferrer">${postItem.title}</a><button type="button" class="btn btn-outline-primary btn-sm" data-id="${postItem.id}" data-bs-toggle="modal" data-bs-target="#modal">Просмотр</button>`
+        const liButton = liEl.querySelector('.btn');
+        liButton.addEventListener('click', (e) => {
+          const idElement = e.target.previousSibling.getAttribute('data-id');
+          const idPost = stats.feedStats.post.find(element => element.id == idElement);
+          modalTitle.textContent = idPost.title;
+          modalBody.textContent = idPost.description;
+          idPost.fw = 'fw-normal';
+          postsRender();
+        });
         ulEl.append(liEl);
       })
     }
@@ -159,6 +170,7 @@ export default () => {
             title: item.querySelector('title').textContent,
             description: item.querySelector('description').textContent,
             link: item.querySelector('link').textContent,
+            fw: 'fw-bold',
           });
         })
         watchedFeedState.push(newFeedStats);
@@ -178,6 +190,7 @@ export default () => {
           title: item.querySelector('title').textContent,
           description: item.querySelector('description').textContent,
           link: item.querySelector('link').textContent,
+          fw: 'fw-bold',
         });
       }
     })
