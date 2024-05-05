@@ -56,6 +56,16 @@ export default () => {
 
   const schema = yup.string().url().nullable();
 
+  const isNull = (url) => {
+    return new Promise((resolve, reject) => {
+      if (url) {
+        resolve(url);
+      } else {
+        reject(new Error('not to be null'));
+      }
+    })
+  };
+
   const render = () => {
     pText.textContent = stats.status;
     if (stats.isTrue) {
@@ -203,7 +213,7 @@ export default () => {
     return new Promise((resolve, reject) => {
       axios.get(`https://allorigins.hexlet.app/get?disableCache=true&url=${encodeURIComponent(url)}`)
         .then((rss) => resolve(rss))
-        .catch((e) => reject(e))
+        .catch(() => reject(new Error('network error')))
     })
   };
 
@@ -229,7 +239,10 @@ export default () => {
 
   const addUrl = (url) => {
     watchedProgress.processed = 'in progress';
-    schema.validate(url)
+    stats.isTrue = true;
+    watchedSubmit.status = i18ni.t(`text.writing`);
+    isNull(url)
+      .then((url) => schema.validate(url))
       .then((data) => getRSS(data))
       .then((rss) => parseRSS(rss.data.contents))
       .then((channel) => addRSS(channel, url))

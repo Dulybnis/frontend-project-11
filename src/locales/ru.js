@@ -10,6 +10,9 @@ export default {
       'RSS already exists': 'RSS уже существует',
       'channel is null': 'Ресурс не содержит валидный RSS',
       'this must be a valid URL': 'Ссылка должна быть валидным URL',
+      'not to be null': 'Не должно быть пустым',
+      'writing': 'Просмотр',
+      'network error': 'Ошибка сети',
     },
   },
 };

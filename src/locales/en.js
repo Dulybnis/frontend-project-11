@@ -9,7 +9,10 @@ export default {
       rssAdded: 'RSS uploaded successfully',
       'RSS already exists': 'RSS already exists',
       'channel is null': 'RSS is not valide',
-      'this must be a valid URL': 'this must be a valid URL',
+      'this must be a valid URL': 'This must be a valid URL',
+      'not to be null': 'Not to be null',
+      'writing': 'Writing',
+      'network error': 'Network error',
     },
   },
 };
