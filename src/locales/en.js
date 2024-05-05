@@ -7,8 +7,9 @@ export default {
     underFormText: 'Example: https://lorem-rss.hexlet.app/feed',
     text: {
       rssAdded: 'RSS uploaded successfully',
-      rssAlredy: 'RSS already exists',
+      'RSS already exists': 'RSS already exists',
       'channel is null': 'RSS is not valide',
+      'this must be a valid URL': 'this must be a valid URL',
     },
   },
 };
