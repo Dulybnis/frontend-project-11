@@ -68,14 +68,17 @@ export default () => {
 
   const render = () => {
     pText.textContent = stats.status;
-    if (stats.isTrue) {
-      input.classList.remove('is-invalid');
-      pText.classList.remove('text-danger');
-      pText.classList.add('text-success');
-    } else {
-      input.classList.add('is-invalid');
-      pText.classList.remove('text-success');
-      pText.classList.add('text-danger');
+    switch(stats.isTrue) {
+      case true:
+        input.classList.remove('is-invalid');
+        pText.classList.remove('text-danger');
+        pText.classList.add('text-success');
+        break;
+      default:
+        input.classList.add('is-invalid');
+        pText.classList.remove('text-success');
+        pText.classList.add('text-danger');
+        break;
     }
   };
 
@@ -163,31 +166,7 @@ export default () => {
     })
   };
 
-  const feedAdd = (channel) => {
-    stats.feedStats.lastFeedId += 1;
-        const newFeedStats = {
-          id: stats.feedStats.lastFeedId,
-          title: channel.querySelector('title').textContent,
-          description: channel.querySelector('description').textContent,
-          link: channel.querySelector('link').textContent,
-        };
-        const newPostStats = [];
-        channel.querySelectorAll('item').forEach((item) => {
-          stats.feedStats.lastPostId += 1;
-          newPostStats.push({
-            id: stats.feedStats.lastPostId,
-            feedId: stats.feedStats.lastFeedId,
-            title: item.querySelector('title').textContent,
-            description: item.querySelector('description').textContent,
-            link: item.querySelector('link').textContent,
-            fw: 'fw-bold',
-          });
-        })
-        watchedFeedState.push(newFeedStats);
-        watchedPostState.unshift(...newPostStats);
-  };
-
-  const parseRefresh = (channel) => {
+  const postsAdd = (channel) => {
     const ownTitle = stats.feedStats.post.map((post) => post.title);
     const newPostStats = [];
     channel.querySelectorAll('item').forEach((item) => {
@@ -207,6 +186,18 @@ export default () => {
     if (newPostStats.length > 0) {
       watchedPostState.unshift(...newPostStats);
     }
+  };
+
+  const feedAdd = (channel) => {
+    stats.feedStats.lastFeedId += 1;
+    const newFeedStats = {
+      id: stats.feedStats.lastFeedId,
+      title: channel.querySelector('title').textContent,
+      description: channel.querySelector('description').textContent,
+      link: channel.querySelector('link').textContent,
+    };
+    postsAdd(channel);
+    watchedFeedState.push(newFeedStats);
   };
 
   const getRSS = (url) => {
@@ -258,7 +249,7 @@ export default () => {
       stats.urls.forEach((url) => {
         getRSS(url)
         .then((rss) => parseRSS(rss.data.contents))
-        .then((channel) => parseRefresh(channel))
+        .then((channel) => postsAdd(channel))
       })
     }
     setTimeout(() => {
