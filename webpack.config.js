@@ -10,6 +10,7 @@ const config = {
   output: {
     filename: 'main.js',
     path: path.resolve(__dirname, 'dist'),
+    clean: true,
   },
   devServer: {
     open: true,
@@ -46,9 +47,6 @@ const config = {
         use: 'file-loader',
       },
     ],
-  },
-  output: {
-  clean: true,
   },
 };
 

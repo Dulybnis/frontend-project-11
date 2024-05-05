@@ -113,7 +113,7 @@ export default () => {
         const liButton = liEl.querySelector('.btn');
         liButton.addEventListener('click', (e) => {
           const idElement = e.target.previousSibling.getAttribute('data-id');
-          const idPost = stats.feedStats.post.find((element) => {return element.id === Number(idElement)});
+          const idPost = stats.feedStats.post.find((element) => element.id === Number(idElement));
           modalTitle.textContent = idPost.title;
           modalBody.textContent = idPost.description;
           idPost.fw = 'fw-normal';
@@ -239,7 +239,7 @@ export default () => {
   const addUrl = (url) => {
     watchedProgress.processed = 'in progress';
     stats.isTrue = true;
-    watchedSubmit.status = i18ni.t('text.viewing');
+    watchedSubmit.status = i18ni.t('text.viewingURL');
     isNull(url)
       .then((notNullUrl) => schema.validate(notNullUrl))
       .then((validateUrl) => getRSS(validateUrl))
@@ -249,7 +249,7 @@ export default () => {
         stats.isTrue = false;
         watchedSubmit.status = i18ni.t(`text.${e.message}`);
       })
-      .then(() => {watchedProgress.processed = 'finish'});
+      .then(() => { watchedProgress.processed = 'finish'; });
   };
 
   form.addEventListener('submit', (e) => {
