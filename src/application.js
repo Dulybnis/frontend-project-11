@@ -239,7 +239,7 @@ export default () => {
   const addUrl = (url) => {
     watchedProgress.processed = 'in progress';
     stats.isTrue = true;
-    watchedSubmit.status = i18ni.t('text.viewingURL');
+    watchedSubmit.status = i18ni.t('text.URLview');
     isNull(url)
       .then((notNullUrl) => schema.validate(notNullUrl))
       .then((validateUrl) => getRSS(validateUrl))

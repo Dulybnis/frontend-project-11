@@ -11,7 +11,7 @@ export default {
       'channel is null': 'RSS is not valide',
       'this must be a valid URL': 'This must be a valid URL',
       'not to be null': 'Not to be null',
-      'viewingURL': 'Viewing',
+      'URLview': 'Viewing',
       'network error': 'Network error',
     },
   },
