@@ -11,7 +11,7 @@ export default {
       'channel is null': 'Ресурс не содержит валидный RSS',
       'this must be a valid URL': 'Ссылка должна быть валидным URL',
       'not to be null': 'Не должно быть пустым',
-      'URLview': 'Просмотр',
+      URLview: 'Просмотр',
       'network error': 'Ошибка сети',
     },
   },
