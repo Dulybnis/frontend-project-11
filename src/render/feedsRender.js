@@ -15,7 +15,7 @@ const feedsRender = (stats, elements, i18ni) => {
     divBorder.append(ulList);
     elements.feeds.append(divBorder);
 
-    const ulEl = elements.feeds.querySelector('ul');      
+    const ulEl = elements.feeds.querySelector('ul');
     stats.feedStats.feed.forEach((feedItem) => {
       const liEl = document.createElement('li');
       liEl.className = 'list-group-item border-0 border-end-0';
@@ -29,7 +29,7 @@ const feedsRender = (stats, elements, i18ni) => {
       liEl.append(pEl);
       ulEl.append(liEl);
     });
-  elements.feeds.append(ulEl);
+    elements.feeds.append(ulEl);
   }
 };
 
