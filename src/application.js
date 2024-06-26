@@ -3,13 +3,16 @@ import * as yup from 'yup';
 import onChange from 'on-change';
 import axios from 'axios';
 import resources from './locales/index.js';
+import render from './render/render.js';
+import feedsRender from './render/feedsRender.js';
+import postsRender from './render/postRender.js';
+import progressRender from './render/progressRender.js';
 
 export default () => {
   const stats = {
     language: 'ru',
     urls: [],
     status: '',
-    isTrue: true,
     refresh: 'off',
     processed: 'finish',
     feedStats: {
@@ -27,23 +30,29 @@ export default () => {
     resources,
   });
 
-  const form = document.querySelector('.rss-form');
-  const formButton = form.querySelector('.btn');
-  const input = document.querySelector('#url-input');
-  const pText = document.querySelector('.feedback');
-  const h1 = document.querySelector('h1');
-  const lead = document.querySelector('.lead');
-  const underText = document.querySelector('.text-muted');
-  const posts = document.querySelector('.posts');
-  const feeds = document.querySelector('.feeds');
-  const modalTitle = document.querySelector('.modal-title');
-  const modalBody = document.querySelector('.modal-body');
+  const elements = {
+    header: document.querySelector('h1'),
+    lead: document.querySelector('.lead'),
+    input: document.querySelector('#url-input'),
+    form: document.querySelector('.rss-form'),
+    formButton: document.querySelector('.rss-form .btn'),
+    underText: document.querySelector('.text-muted'),
+    modalRead: document.querySelector('.modal-footer .btn-primary'),
+    modalClose: document.querySelector('.modal-footer .btn-secondary'),
+    pText: document.querySelector('.feedback'),
+    posts: document.querySelector('.posts'),
+    feeds: document.querySelector('.feeds'),
+    modalTitle: document.querySelector('.modal-title'),
+    modalBody: document.querySelector('.modal-body'),
+  };
 
-  input.nextElementSibling.textContent = i18ni.t('inputText');
-  h1.textContent = i18ni.t('h1');
-  lead.textContent = i18ni.t('displayText');
-  form.querySelector('button').textContent = i18ni.t('buttomText');
-  underText.textContent = i18ni.t('underFormText');
+  elements.input.nextElementSibling.textContent = i18ni.t('inputText');
+  elements.header.textContent = i18ni.t('h1');
+  elements.lead.textContent = i18ni.t('displayText');
+  elements.form.querySelector('button').textContent = i18ni.t('buttomText');
+  elements.underText.textContent = i18ni.t('underFormText');
+  elements.modalRead.textContent = i18ni.t('modalRead');
+  elements.modalClose.textContent = i18ni.t('modalClose');
 
   // для привязки двух языков сделал через Error('RSS already exists')
   /* yup.setLocale({
@@ -55,108 +64,37 @@ export default () => {
 
   const schema = yup.string().url().nullable();
 
-  function isNull(url) {
-    return new Promise((resolve, reject) => {
-      if (url) {
-        resolve(url);
-      } else {
-        reject(new Error('not to be null'));
-      }
-    });
-  }
-
-  const render = () => {
-    pText.textContent = stats.status;
-    switch (stats.isTrue) {
-      case true:
-        input.classList.remove('is-invalid');
-        pText.classList.remove('text-danger');
-        pText.classList.add('text-success');
-        break;
-      default:
-        input.classList.add('is-invalid');
-        pText.classList.remove('text-success');
-        pText.classList.add('text-danger');
-        break;
-    }
-  };
-
-  const feedsRender = () => {
-    feeds.innerHTML = '';
-    if (stats.feedStats.feed.length > 0) {
-      const h2El = document.createElement('div');
-      h2El.className = 'card border-0';
-      h2El.innerHTML = '<div class="card-body"><h2 class="card-title h4">Фиды</h2></div><ul class="list-group border-0 rounded-0"></ul>';
-      feeds.append(h2El);
-      const ulEl = feeds.querySelector('ul');
-      stats.feedStats.feed.forEach((feedItem) => {
-        const liEl = document.createElement('li');
-        liEl.className = 'list-group-item border-0 border-end-0';
-        liEl.innerHTML = `<h3 class="h6 m-0">${feedItem.title}</h3><p class="m-0 small text-black-50">${feedItem.description}</p>`;
-        ulEl.append(liEl);
-      });
-    }
-  };
-
-  const postsRender = () => {
-    posts.innerHTML = '';
-    if (stats.feedStats.post.length > 0) {
-      const h2El = document.createElement('div');
-      h2El.className = 'card border-0';
-      h2El.innerHTML = '<div class="card-body"><h2 class="card-title h4">Посты</h2></div><ul class="list-group border-0 rounded-0"></ul>';
-      posts.append(h2El);
-      const ulEl = posts.querySelector('ul');
-      stats.feedStats.post.forEach((postItem) => {
-        const liEl = document.createElement('li');
-        liEl.className = 'list-group-item d-flex justify-content-between align-items-start border-0 border-end-0';
-        liEl.innerHTML = `<a href="${postItem.link}" class="${postItem.fw}" data-id="${postItem.id}" target="_blank" rel="noopener noreferrer">${postItem.title}</a><button type="button" class="btn btn-outline-primary btn-sm" data-id="${postItem.id}" data-bs-toggle="modal" data-bs-target="#modal">Просмотр</button>`;
-        const liButton = liEl.querySelector('.btn');
-        liButton.addEventListener('click', (e) => {
-          const idElement = e.target.previousSibling.getAttribute('data-id');
-          const idPost = stats.feedStats.post.find((element) => element.id === Number(idElement));
-          modalTitle.textContent = idPost.title;
-          modalBody.textContent = idPost.description;
-          idPost.fw = 'fw-normal';
-          postsRender();
-        });
-        ulEl.append(liEl);
-      });
-    }
-  };
-
-  const progressRender = () => {
-    if (stats.processed === 'in progress') {
-      formButton.setAttribute('disabled', '');
-    } else {
-      formButton.removeAttribute('disabled');
-    }
-  };
-
   const watchedSubmit = onChange(stats, () => {
-    render();
+    render(stats, elements, i18ni);
   });
 
   const watchedFeedState = onChange(stats.feedStats.feed, () => {
-    feedsRender();
+    feedsRender(stats, elements, i18ni);
   });
 
   const watchedPostState = onChange(stats.feedStats.post, () => {
-    postsRender();
+    postsRender(stats, elements, i18ni);
   });
 
   const watchedProgress = onChange(stats, () => {
-    progressRender();
+    progressRender(elements, stats);
   });
 
   function parseRSS(rss) {
     return new Promise((resolve, reject) => {
       const parser = new DOMParser();
       const parsingRSS = parser.parseFromString(rss, 'application/xml');
-      const channel = parsingRSS.querySelector('channel');
-      if (channel) {
-        resolve(channel);
+      const parsererrors = parsingRSS.querySelector('parsererror');
+      if (parsererrors !== null) {
+        const error = parsererrors.tagName;
+        throw new Error(error);
       } else {
-        reject(new Error('channel is null'));
+        const channel = parsingRSS.querySelector('channel');
+        if (channel) {
+          resolve(channel);
+        } else {
+          reject(new Error('channel is null'));
+        }
       }
     });
   }
@@ -195,9 +133,16 @@ export default () => {
     watchedFeedState.push(newFeedStats);
   };
 
+  const makeURL = (url) => {
+    const newUrl = new URL('https://allorigins.hexlet.app/get');
+    newUrl.searchParams.set('disableCache', 'true');
+    newUrl.searchParams.set('url', url);
+    return newUrl;
+  };
+
   function getRSS(url) {
     return new Promise((resolve, reject) => {
-      axios.get(`https://allorigins.hexlet.app/get?disableCache=true&url=${encodeURIComponent(url)}`)
+      axios.get(makeURL(url).href)
         .then((rss) => resolve(rss))
         .catch(() => reject(new Error('network error')));
     });
@@ -219,10 +164,9 @@ export default () => {
   function addRSS(channel, url) {
     return new Promise((resolve, reject) => {
       if (!stats.urls.includes(url)) {
-        stats.status = i18ni.t('text.rssAdded');
-        stats.isTrue = true;
-        input.value = '';
-        input.focus();
+        stats.status = 'text.rssAdded';
+        elements.input.value = '';
+        elements.input.focus();
         watchedSubmit.urls.push(url);
         feedAdd(channel);
         if (stats.refresh === 'off') {
@@ -238,22 +182,19 @@ export default () => {
 
   const addUrl = (url) => {
     watchedProgress.processed = 'in progress';
-    stats.isTrue = true;
-    watchedSubmit.status = i18ni.t('text.URLview');
-    isNull(url)
-      .then((notNullUrl) => schema.validate(notNullUrl))
+    watchedSubmit.status = 'text.URLview';
+    schema.validate(url)
       .then((validateUrl) => getRSS(validateUrl))
       .then((rss) => parseRSS(rss.data.contents))
       .then((channel) => addRSS(channel, url))
       .catch((e) => {
-        stats.isTrue = false;
-        watchedSubmit.status = i18ni.t(`text.${e.message}`);
+        watchedSubmit.status = `text.${e.message}`;
       })
       .then(() => { watchedProgress.processed = 'finish'; });
   };
 
-  form.addEventListener('submit', (e) => {
+  elements.form.addEventListener('submit', (e) => {
     e.preventDefault();
-    addUrl(input.value);
+    addUrl(elements.input.value);
   });
 };
