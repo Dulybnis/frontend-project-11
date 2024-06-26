@@ -18,7 +18,7 @@ export default {
     //  'not to be null': 'Не должно быть пустым',
       URLview: 'Просмотр',
       'network error': 'Ошибка сети',
-      parsererror: 'Ошибка парсинга',
+      parsererror: 'Ресурс не содержит валидный RSS',
     },
   },
 };

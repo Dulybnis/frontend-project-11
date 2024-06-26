@@ -18,7 +18,7 @@ export default {
     //  'not to be null': 'Not to be null',
       URLview: 'Viewing',
       'network error': 'Network error',
-      parsererror: 'Parsing error',
+      parsererror: 'RSS is not valide',
     },
   },
 };
