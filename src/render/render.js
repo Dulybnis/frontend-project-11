@@ -1,4 +1,5 @@
-const render = (stats, elements, i18ni) => {
+const render = (stats, el, i18ni) => {
+  const elements = el;
   elements.pText.textContent = i18ni.t(stats.status);
   switch (stats.status) {
     case '':

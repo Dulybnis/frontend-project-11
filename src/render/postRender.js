@@ -1,4 +1,5 @@
-const postsRender = (stats, elements, i18ni) => {
+const postsRender = (stats, el, i18ni) => {
+  const elements = el;
   elements.posts.textContent = '';
   if (stats.feedStats.post.length > 0) {
     const divBorder = document.createElement('div');
