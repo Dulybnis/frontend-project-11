@@ -83,7 +83,7 @@ export default () => {
       } else {
         const channel = parsingRSS.querySelector('channel');
         if (channel) {
-          if (!stats.feedStats.feed.find(item => item.title === channel.querySelector('title').textContent)) {
+          if (!stats.feedStats.feed.find((item) => item.title === channel.querySelector('title').textContent)) {
             stats.feedStats.lastFeedId += 1;
             const newFeedStats = {
               id: stats.feedStats.lastFeedId,
@@ -137,9 +137,9 @@ export default () => {
 
   const refresh = () => {
     Promise.all(stats.urls)
-      .then(responses => responses.forEach((url) => {
+      .then((responses) => responses.forEach((url) => {
         getRSS(url)
-        .then((rss) => parseRSS(rss.data.contents))
+          .then((rss) => parseRSS(rss.data.contents));
       }))
       .then(setTimeout(() => {
         refresh();
