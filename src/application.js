@@ -54,14 +54,6 @@ export default () => {
   elements.modalRead.textContent = i18ni.t('modalRead');
   elements.modalClose.textContent = i18ni.t('modalClose');
 
-  // для привязки двух языков сделал через Error('RSS already exists')
-  /* yup.setLocale({
-    mixed: {
-      default: 'Поле не валидно',
-    },
-    string: { url: 'Ссылка должна быть валидным URL'},
-  }); */
-
   const schema = yup.string().url().nullable();
 
   const watchedSubmit = onChange(stats, () => {
@@ -91,6 +83,35 @@ export default () => {
       } else {
         const channel = parsingRSS.querySelector('channel');
         if (channel) {
+          if (!stats.feedStats.feed.find(item => item.title === channel.querySelector('title').textContent)) {
+            stats.feedStats.lastFeedId += 1;
+            const newFeedStats = {
+              id: stats.feedStats.lastFeedId,
+              title: channel.querySelector('title').textContent,
+              description: channel.querySelector('description').textContent,
+              link: channel.querySelector('link').textContent,
+            };
+            watchedFeedState.push(newFeedStats);
+          }
+          const ownTitle = stats.feedStats.post.map((post) => post.title);
+          const newPostStats = [];
+          channel.querySelectorAll('item').forEach((item) => {
+            const title = item.querySelector('title').textContent;
+            if (!ownTitle.includes(title)) {
+              stats.feedStats.lastPostId += 1;
+              newPostStats.push({
+                id: stats.feedStats.lastPostId,
+                feedId: stats.feedStats.lastFeedId,
+                title: item.querySelector('title').textContent,
+                description: item.querySelector('description').textContent,
+                link: item.querySelector('link').textContent,
+                fw: 'fw-bold',
+              });
+            }
+          });
+          if (newPostStats.length > 0) {
+            watchedPostState.unshift(...newPostStats);
+          }
           resolve(channel);
         } else {
           reject(new Error('channel is null'));
@@ -98,40 +119,6 @@ export default () => {
       }
     });
   }
-
-  const postsAdd = (channel) => {
-    const ownTitle = stats.feedStats.post.map((post) => post.title);
-    const newPostStats = [];
-    channel.querySelectorAll('item').forEach((item) => {
-      const title = item.querySelector('title').textContent;
-      if (!ownTitle.includes(title)) {
-        stats.feedStats.lastPostId += 1;
-        newPostStats.push({
-          id: stats.feedStats.lastPostId,
-          feedId: stats.feedStats.lastFeedId,
-          title: item.querySelector('title').textContent,
-          description: item.querySelector('description').textContent,
-          link: item.querySelector('link').textContent,
-          fw: 'fw-bold',
-        });
-      }
-    });
-    if (newPostStats.length > 0) {
-      watchedPostState.unshift(...newPostStats);
-    }
-  };
-
-  const feedAdd = (channel) => {
-    stats.feedStats.lastFeedId += 1;
-    const newFeedStats = {
-      id: stats.feedStats.lastFeedId,
-      title: channel.querySelector('title').textContent,
-      description: channel.querySelector('description').textContent,
-      link: channel.querySelector('link').textContent,
-    };
-    postsAdd(channel);
-    watchedFeedState.push(newFeedStats);
-  };
 
   const makeURL = (url) => {
     const newUrl = new URL('https://allorigins.hexlet.app/get');
@@ -149,16 +136,14 @@ export default () => {
   }
 
   const refresh = () => {
-    if (stats.urls.length > 0) {
-      stats.urls.forEach((url) => {
+    Promise.all(stats.urls)
+      .then(responses => responses.forEach((url) => {
         getRSS(url)
-          .then((rss) => parseRSS(rss.data.contents))
-          .then((channel) => postsAdd(channel));
-      });
-    }
-    setTimeout(() => {
-      refresh();
-    }, 5000);
+        .then((rss) => parseRSS(rss.data.contents))
+      }))
+      .then(setTimeout(() => {
+        refresh();
+      }, 5000));
   };
 
   function addRSS(channel, url) {
@@ -168,7 +153,6 @@ export default () => {
         elements.input.value = '';
         elements.input.focus();
         watchedSubmit.urls.push(url);
-        feedAdd(channel);
         if (stats.refresh === 'off') {
           stats.refresh = 'on';
           refresh();
